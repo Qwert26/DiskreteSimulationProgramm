@@ -14,10 +14,10 @@ class LCG(object):
         self.seed=(self.mult*self.seed+self.add)%self.mod;
         return self.seed;
     def nextFloat(self):
-        """Erzeugt den nächsten float-Wert im Bereich [0;1) und gibt ihn zurück. Benötigt Python 3 fürs korrekte Arbeiten!"""
+        """Erzeugt den nächsten gleichverteilten float-Wert im Bereich [0;1) und gibt ihn zurück. Benötigt Python 3 fürs korrekte Arbeiten!"""
         return self.nextSeed()/self.mod;
     def nextTransformed(self,inverseCDF):
-        """Erzeugt intern den nächsten float-Wert und übergibt diesen der inversen CDF."""
+        """Erzeugt intern den nächsten gleichverteilten float-Wert und übergibt diesen der inversen CDF."""
         return inverseCDF(self.nextFloat());
     def nextGaussian(self):
         """Erzeugt standardnormal-verteilte Zufallszahlen nach der Marsaglia Polar Methode. Selber Algorithmus wie auch in java.util.Random.nextGaussian()."""
@@ -42,3 +42,10 @@ class LCG(object):
     def nextBool(self,chance=0.5):
         """Erzeugt den nächsten Warheitswert der mit der gegebenen chance den Wert 'True' hat."""
         return chance>self.nextFloat();
+def main():
+    lcg=LCG(seed=0);
+    for i in range(20):
+        print(lcg.nextGaussian());
+    return 0;
+if __name__ == "__main__":
+    main();
