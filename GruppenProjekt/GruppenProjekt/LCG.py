@@ -41,4 +41,4 @@ class LCG(object):
                     continue;
     def nextBool(self,chance=0.5):
         """Erzeugt den nächsten Warheitswert der mit der gegebenen chance den Wert 'True' hat."""
-        return chance>=self.nextFloat();
+        return chance>self.nextFloat();
