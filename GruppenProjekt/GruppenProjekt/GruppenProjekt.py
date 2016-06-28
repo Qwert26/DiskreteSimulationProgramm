@@ -2,14 +2,10 @@ import simpy
 import math
 from LCG import LCG
 #Parameters
-K=3
-"""Anzahl der Kassen bei Start"""
-L=5
-"""Anzahl der wartenden Kunden"""
-Tr=0.5 #Minuten
-"""Anzahl der Minuten pro Tier an der Kasse"""
-lamda=0.5 #/Minute
-"""Parameter der Exponentialverteilung"""
+K=3#Anzahl der Kassen bei Start
+L=5#Anzahl der wartenden Kunden
+Tr=0.5 #Minuten Anzahl der Minuten pro Tier an der Kasse
+lamda=0.5 #/Minute Parameter der Exponentialverteilung
 
 def generate(enviroment):
     """Generiert Kunden"""
@@ -22,6 +18,12 @@ def inverseCDFExponential(x):
 def noInSystem(resource):
     """Aktuelle Anzahl der Nutzer einer Ressourcen"""
     return len(resource.users)+len(resource.queue);
+def waitingCustomers():
+    """Wie viele Kunden insgesamt im System warten"""
+    sum=0;
+    for res in counters:
+        sum+=len(res.queue);
+    return sum;
 def customer(enviroment,ressources):
     """Modelliert einen Kunden in der Tierhandlung."""
     qLengths=[noInSystem(ressources[i]) for i in range(len(ressources))];
