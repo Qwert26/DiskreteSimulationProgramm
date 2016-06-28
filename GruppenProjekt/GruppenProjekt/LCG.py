@@ -45,7 +45,7 @@ class LCG(object):
 def main():
     lcg=LCG(seed=0);
     for i in range(20):
-        print(lcg.nextGaussian());
+        print(lcg.nextFloat());
     return 0;
 if __name__ == "__main__":
     main();
