@@ -4,8 +4,8 @@ from LCG import LCG;
 #Parameters
 K=3#Anzahl der Kassen bei Start
 L=5#Anzahl der wartenden Kunden
-Tr=0.5 #Minuten Anzahl der Minuten pro Tier an der Kasse
-lamda=0.5 #/Minute Parameter der Exponentialverteilung
+Tr=0.5 #Minuten, Anzahl der Minuten pro Tier an der Kasse
+lamda=0.5 #/Minute, Parameter der Exponentialverteilung
 
 def generate(enviroment):
     """Generiert Kunden"""
@@ -13,7 +13,7 @@ def generate(enviroment):
     while True:
         yield enviroment.timeout(lcg.nextTransformed(inverseCDFExponential));
         enviroment.process(customer(enviroment,counters,kundenNummer));
-        print("Kunde %i erzeugt um %f"%(kundenNummer,enviroment.now));
+        print("Kunde %i erzeugt um %i:%i:%i"%(kundenNummer,enviroment.now/60,enviroment.now%60,(enviroment.now%1)*60)); #Druckt die genaue Uhrzeit aus, wann ein neuer Kunde die Tierhandlung betritt.
         kundenNummer+=1;
     return;
 
@@ -40,7 +40,7 @@ def customer(enviroment,ressources,kundenNummer):
             choice=i;
             break;
     #kuerzeste Warteschlange gewaehlt.
-    print("Kunde wählte Kasse %i"%choice);
+    print("Kunde %i wählte Kasse %i"%(kundenNummer,choice));
     res=ressources[choice];
     with res.request() as req:
         yield req;
@@ -50,7 +50,7 @@ def customer(enviroment,ressources,kundenNummer):
                 tiere+=1;
                 #Binominalverteilte Inkrementierung: Zwischen +0 und +4.
         bezahlzeit=tiere*Tr+lcg.nextTransformed(inverseCDFPareto);
-        print("Kunde wird %f Minuten für das Bezahlen brauchen"%bezahlzeit);
+        print("Kunde %i wird %f Minuten für das Bezahlen brauchen"%(kundenNummer,bezahlzeit));
         yield enviroment.timeout(bezahlzeit);
     #if noInSystem(res)==0 and len(ressources)>1:
         #ressources.remove(res);
