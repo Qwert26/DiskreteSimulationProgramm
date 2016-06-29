@@ -22,6 +22,9 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Analytics.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="GruppenProjekt.py" />
     <Compile Include="LCG.py">
       <SubType>Code</SubType>
