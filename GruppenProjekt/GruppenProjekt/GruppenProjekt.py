@@ -28,22 +28,11 @@ def noInSystem(resource):
 
 def waitingCustomers():
     """Wie viele Kunden insgesamt im System warten"""
-    sum=0;
-    for res in counters:
-        sum+=len(res.queue);
-    return sum;
+    return len(counters.queue);
 
-def customer(enviroment,ressources,kundenNummer):
+def customer(enviroment,ressource,kundenNummer):
     """Modelliert einen Kunden in der Tierhandlung."""
-    qLengths=[noInSystem(ressources[i]) for i in range(len(ressources))];
-    for i in range(len(ressources)):
-        if qLengths[i]==0 or qLengths[i]==min(qLengths):
-            choice=i;
-            break;
-    #kuerzeste Warteschlange gewaehlt.
-    print("Kunde %i wählte Kasse %i"%(kundenNummer,choice));
-    res=ressources[choice];
-    with res.request() as req:
+    with ressource.request() as req:
         Analytics.addWaitsAtPoint(enviroment.now,waitingCustomers());
         inSystem=enviroment.now;
         yield req;
@@ -56,8 +45,9 @@ def customer(enviroment,ressources,kundenNummer):
         bezahlzeit=tiere*Tr+lcg.nextTransformed(inverseCDFPareto);
         print("Kunde %i wird %f Minuten für das Bezahlen brauchen"%(kundenNummer,bezahlzeit));
         yield enviroment.timeout(bezahlzeit);
-    #if noInSystem(res)==0 and len(ressources)>1:
-        #ressources.remove(res);
+    if waitingCustomers()<ressource.capacity:
+        print("Kasse geschlossen");
+        ressource.capacity-=1;
     Analytics.addTotaltimePerCustomer(kundenNummer,enviroment.now-inSystem);
     return;
 
@@ -67,12 +57,23 @@ def inverseCDFPareto(x):
     alpha=2.0;
     return xmin/((1-x)**(1/alpha))
 
-counters=[];
-lcg=LCG(seed=0);
+def counterOpener(enviroment):
+    while True:
+        while L<=waitingCustomers():
+            yield;
+        yield env.timeout(lcg.nextTransformed(inverseCounterTime));
+        print("Kasse geöffnet.");
+        counters.capacity+=1;
+    return;
+
+def inverseCounterTime(x):
+    return math.sqrt(math.sqrt(24*x+1)-1);
+
+lcg=LCG();
 env=simpy.Environment(8*60);#Starte die Simulation um 8 Uhr. Das sind 8*60 Minuten nach Mitternacht.
-for i in range(K):
-    counters.append(simpy.Resource(env));
+counters=simpy.Resource(env,K);
 env.process(generate(env));
+env.process(counterOpener(env));
 env.run(until=16*60);#Lasse die Simulation bis 16 Uhr laufen. Das ist dann 16*60 Minuten nach Mitternacht.
 Analytics.createWaitAtPointGraph();
 Analytics.createWaittimePerCustomerGraph();
