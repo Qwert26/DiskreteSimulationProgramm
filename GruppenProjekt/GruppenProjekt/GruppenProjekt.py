@@ -1,6 +1,7 @@
 import simpy;
 import math;
 from LCG import LCG;
+import Analytics;
 #Parameters
 K=3#Anzahl der Kassen bei Start
 L=5#Anzahl der wartenden Kunden
@@ -43,7 +44,10 @@ def customer(enviroment,ressources,kundenNummer):
     print("Kunde %i wählte Kasse %i"%(kundenNummer,choice));
     res=ressources[choice];
     with res.request() as req:
+        Analytics.addWaitsAtPoint(enviroment.now,waitingCustomers());
+        inSystem=enviroment.now;
         yield req;
+        Analytics.addWaittimePerCustomer(kundenNummer,enviroment.now-inSystem);
         tiere=1;
         for i in range(4):
             if lcg.nextBool(0.5):
@@ -54,6 +58,7 @@ def customer(enviroment,ressources,kundenNummer):
         yield enviroment.timeout(bezahlzeit);
     #if noInSystem(res)==0 and len(ressources)>1:
         #ressources.remove(res);
+    Analytics.addTotaltimePerCustomer(kundenNummer,enviroment.now-inSystem);
     return;
 
 def inverseCDFPareto(x):
@@ -63,9 +68,12 @@ def inverseCDFPareto(x):
     return xmin/((1-x)**(1/alpha))
 
 counters=[];
-lcg=LCG();
+lcg=LCG(seed=0);
 env=simpy.Environment(8*60);#Starte die Simulation um 8 Uhr. Das sind 8*60 Minuten nach Mitternacht.
 for i in range(K):
     counters.append(simpy.Resource(env));
 env.process(generate(env));
 env.run(until=16*60);#Lasse die Simulation bis 16 Uhr laufen. Das ist dann 16*60 Minuten nach Mitternacht.
+Analytics.createWaitAtPointGraph();
+Analytics.createWaittimePerCustomerGraph();
+Analytics.createTotaltimePerCustomerGraph();
