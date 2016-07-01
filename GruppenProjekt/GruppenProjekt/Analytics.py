@@ -14,10 +14,10 @@ def createWaitAtPointGraph():
         zeitpunkte.append(datapoint[0]/60);
         wartende.append(datapoint[1]);
     plot.plot(zeitpunkte,wartende);
-    plot.xlabel("Stunden");
+    plot.xlabel("Uhrzeit");
     plot.ylabel("wartende Kunden");
     plot.xlim(8,16);
-    plot.savefig("Wartegraph.png");
+    plot.savefig("Wartegraph.svg");
     plot.show();
     plot.clf();
     return;
@@ -34,7 +34,7 @@ def createWaittimePerCustomerGraph():
     plot.plot(data);
     plot.xlabel("Kundennummer");
     plot.ylabel("Wartezeit [min]");
-    plot.savefig("Wartezeiten.png");
+    plot.savefig("Wartezeiten.svg");
     plot.show();
     plot.clf();
     return;
@@ -51,7 +51,7 @@ def createTotaltimePerCustomerGraph():
     plot.plot(data);
     plot.xlabel("Kundennummer");
     plot.ylabel("Verweilzeit [min]");
-    plot.savefig("Verweilzeiten.png");
+    plot.savefig("Verweilzeiten.svg");
     plot.show();
     plot.clf();
     return;

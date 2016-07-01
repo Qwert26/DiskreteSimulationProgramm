@@ -29,6 +29,9 @@
     <Compile Include="LCG.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="ManagedRessources.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Tests.py">
       <SubType>Code</SubType>
     </Compile>
