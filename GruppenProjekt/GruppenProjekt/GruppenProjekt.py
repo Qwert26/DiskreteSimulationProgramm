@@ -82,9 +82,11 @@ counters=MR(env,K);
 env.process(generate(env));
 env.process(counterOpener(env));
 env.run(until=16*60);#Lasse die Simulation bis 16 Uhr laufen. Das ist dann 16*60 Minuten nach Mitternacht.
+#Erzeuge, zeige und speichere Graphen.
 Analytics.createWaitAtPointGraph();
 Analytics.createWaittimePerCustomerGraph();
 Analytics.createTotaltimePerCustomerGraph();
+#Exportiere Daten in das CSV-Format.
 Analytics.exportWaitsAtPoint("wartende_Kunden.csv");
 Analytics.exportTotaltimePerCustomer("Verweilzeiten.csv");
 Analytics.exportWaittimePerCustomer("Wartezeiten.csv");
