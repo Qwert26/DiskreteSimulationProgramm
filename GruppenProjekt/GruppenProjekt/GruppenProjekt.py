@@ -8,7 +8,7 @@ K=3#Anzahl der Kassen bei Start
 L=5#Anzahl der wartenden Kunden
 Tr=0.5 #Minuten, Anzahl der Minuten pro Tier an der Kasse
 lamda=0.5 #/Minute, Parameter der Exponentialverteilung
-period=0.25;#Periodendauer in Minuten mit der gewartet wird zwischen Bedingungsanfragen, je niedriger desto genauer!
+period=0.01;#Periodendauer in Minuten mit der gewartet wird zwischen Bedingungsanfragen: Je niedriger desto genauer aber auch mehr Overhead für die Simulation.
 
 def generate(enviroment):
     """Generiert Kunden"""
@@ -85,3 +85,6 @@ env.run(until=16*60);#Lasse die Simulation bis 16 Uhr laufen. Das ist dann 16*60
 Analytics.createWaitAtPointGraph();
 Analytics.createWaittimePerCustomerGraph();
 Analytics.createTotaltimePerCustomerGraph();
+Analytics.exportWaitsAtPoint("wartende_Kunden.csv");
+Analytics.exportTotaltimePerCustomer("Verweilzeiten.csv");
+Analytics.exportWaittimePerCustomer("Wartezeiten.csv");

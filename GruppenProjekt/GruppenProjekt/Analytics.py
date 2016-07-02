@@ -1,4 +1,5 @@
-import matplotlib.pyplot as plot
+import matplotlib.pyplot as plot;
+import csv;
 waitsAtPoint=[];
 waittimePerCustomer=[];
 totaltimePerCustomer=[];
@@ -22,6 +23,14 @@ def createWaitAtPointGraph():
     plot.clf();
     return;
 
+def exportWaitsAtPoint(filename:str):
+    with open(filename,'w',newline='') as csvfile:
+        writer=csv.writer(csvfile,delimiter=' ',quotechar='|',quoting=csv.QUOTE_MINIMAL);
+        writer.writerow(['Uhrzeit','wartende Kunden']);
+        for datapoint in waitsAtPoint:
+            writer.writerow(datapoint);
+    return;
+
 def addWaittimePerCustomer(kundenNummer:int,wartezeit:float):
     waittimePerCustomer.append((kundenNummer,wartezeit));
     return;
@@ -39,6 +48,14 @@ def createWaittimePerCustomerGraph():
     plot.clf();
     return;
 
+def exportWaittimePerCustomer(filename:str):
+    with open(filename,'w',newline='') as csvfile:
+        writer=csv.writer(csvfile,delimiter=' ',quotechar='|',quoting=csv.QUOTE_MINIMAL);
+        writer.writerow(['Kundennummer','Wartezeit']);
+        for datapoint in waittimePerCustomer:
+            writer.writerow(datapoint);
+    return;
+
 def addTotaltimePerCustomer(kundenNummer:int,verweilzeit:float):
     totaltimePerCustomer.append((kundenNummer,verweilzeit));
     return;
@@ -54,4 +71,12 @@ def createTotaltimePerCustomerGraph():
     plot.savefig("Verweilzeiten.svg");
     plot.show();
     plot.clf();
+    return;
+
+def exportTotaltimePerCustomer(filename:str):
+    with open(filename,'w',newline='') as csvfile:
+        writer=csv.writer(csvfile,delimiter=' ',quotechar='|',quoting=csv.QUOTE_MINIMAL);
+        writer.writerow(['Kundennummer','Verweilzeit']);
+        for datapoint in totaltimePerCustomer:
+            writer.writerow(datapoint);
     return;
