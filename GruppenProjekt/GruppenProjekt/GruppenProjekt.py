@@ -4,16 +4,17 @@ from LCG import LCG;
 from ManagedRessources import ManagedRessources as MR;
 import Analytics;
 import time;
+import numpy;
 #Parameters
 K=3#Anzahl der Kassen bei Start
 L=5#Anzahl der wartenden Kunden
 Tr=0.5#Minuten, Anzahl der Minuten pro Tier an der Kasse
 lamda=0.5#/Minute, Parameter der Exponentialverteilung
 period=0.01;#Periodendauer in Minuten mit der gewartet wird zwischen Bedingungsanfragen: Je niedriger desto genauer aber auch mehr Overhead für die Simulation.
-
+#Storage
+kundenNummer=0;
 def generate(enviroment):
     """Generiert Kunden"""
-    kundenNummer=0;
     while True:
         yield enviroment.timeout(lcg.nextTransformed(inverseCDFExponential));
         enviroment.process(customer(enviroment,counters,kundenNummer));
@@ -79,23 +80,31 @@ def inverseCounterTime(x):
     return math.sqrt(math.sqrt(24*x+1)-1);
 
 lcg=LCG();
-env=simpy.Environment(8*60);#Starte die Simulation um 8 Uhr. Das sind 8*60 Minuten nach Mitternacht.
-counters=MR(env,K);
-env.process(generate(env));
-env.process(counterOpener(env));
-env.run(until=16*60);#Lasse die Simulation bis 16 Uhr laufen. Das ist dann 16*60 Minuten nach Mitternacht.
-timestamp=time.time();
+timestamp=int(time.time());
+for lamda in numpy.arange(0.5,1.5,0.5):
+    for r in range(10):
+        env=simpy.Environment(8*60);#Starte die Simulation um 8 Uhr. Das sind 8*60 Minuten nach Mitternacht.
+        counters=MR(env,K);
+        kundenNummer=0;
+        env.process(generate(env));
+        env.process(counterOpener(env));
+        env.run(until=16*60);#Lasse die Simulation bis 16 Uhr laufen. Das ist dann 16*60 Minuten nach Mitternacht.
+        Analytics.storeRun(lamda,r+1,kundenNummer);
+        Analytics.reset();
+Analytics.exportRuns("Parameterstudie_%i.csv"%timestamp);
 #Erzeuge, zeige und speichere Graphen.
 #Analytics.createWaitAtPointGraph();
 #Analytics.createWaittimePerCustomerGraph();
 #Analytics.createTotaltimePerCustomerGraph();
+
 #Zeige Mittelwerte an.
-print("mittlere Anzahl wartender Kunden: %f"%Analytics.meanWaits());
-print("mittlere Wartezeit: %f"%Analytics.meanWaittimePerCustomer());
-print("mittlere Verweilzeit: %f"%Analytics.meanTotaltimePerCustomer());
-print("mittlere Warteschlangenlänge: %f"%Analytics.meanAverageQueueLength());
+#print("mittlere Anzahl wartender Kunden: %f"%Analytics.meanWaits());
+#print("mittlere Wartezeit: %f"%Analytics.meanWaittimePerCustomer());
+#print("mittlere Verweilzeit: %f"%Analytics.meanTotaltimePerCustomer());
+#print("mittlere Warteschlangenlänge: %f"%Analytics.meanAverageQueueLength());
+
 #Exportiere Daten in das CSV-Format.
-Analytics.exportWaitsAtPoint("wartende_Kunden%i.csv"%timestamp);
-Analytics.exportTotaltimePerCustomer("Verweilzeiten%i.csv"%timestamp);
-Analytics.exportWaittimePerCustomer("Wartezeiten%i.csv"%timestamp);
-Analytics.exportMeans("Mittelwerte%i.csv"%timestamp);
+#Analytics.exportWaitsAtPoint("wartende_Kunden%i.csv"%timestamp);
+#Analytics.exportTotaltimePerCustomer("Verweilzeiten%i.csv"%timestamp);
+#Analytics.exportWaittimePerCustomer("Wartezeiten%i.csv"%timestamp);
+#Analytics.exportMeans("Mittelwerte%i.csv"%timestamp);

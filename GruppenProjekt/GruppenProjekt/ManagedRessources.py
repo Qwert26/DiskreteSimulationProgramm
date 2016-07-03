@@ -1,4 +1,5 @@
 import simpy;
+import simpy.resources.base;
 import math;
 class ManagedRessources(object):
     def __init__(self,env:simpy.Environment,startCount:int):

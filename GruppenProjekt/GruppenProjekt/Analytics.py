@@ -4,6 +4,7 @@ waitsAtPoint=[];
 waittimePerCustomer=[];
 totaltimePerCustomer=[];
 averageQueueLengthAtPoint=[];
+runStats=[];
 
 def addWaitsAtPoint(zeitpunkt:float,wartendeKunden:int):
     waitsAtPoint.append((zeitpunkt,wartendeKunden));
@@ -118,3 +119,22 @@ def meanAverageQueueLength():
     for data in averageQueueLengthAtPoint:
         sum+=data[1];
     return sum/len(averageQueueLengthAtPoint);
+
+def reset():
+    averageQueueLengthAtPoint.clear();
+    waitsAtPoint.clear();
+    waittimePerCustomer.clear();
+    totaltimePerCustomer.clear();
+    return;
+
+def storeRun(lamda:float,run:int,kunden:int):
+    runStats.append((lamda,run,kunden,meanWaittimePerCustomer(),meanAverageQueueLength()));
+    return;
+
+def exportRuns(filename:str):
+    with open(filename,'w',newline='') as csvfile:
+        writer=csv.writer(csvfile,delimiter=' ',quotechar='|',quoting=csv.QUOTE_MINIMAL);
+        writer.writerow(['lambda-Wert','runID','Kunden','mittlere Wartezeit','mittlere Warteschlangenlänge']);
+        for run in runStats:
+            writer.writerow(run);
+    return;
