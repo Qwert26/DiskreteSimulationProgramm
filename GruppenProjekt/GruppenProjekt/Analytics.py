@@ -31,6 +31,12 @@ def exportWaitsAtPoint(filename:str):
             writer.writerow(datapoint);
     return;
 
+def meanWaits():
+    sum=0.0;
+    for data in waitsAtPoint:
+        sum+=data[1];
+    return sum/len(waitsAtPoint);
+
 def addWaittimePerCustomer(kundenNummer:int,wartezeit:float):
     waittimePerCustomer.append((kundenNummer,wartezeit));
     return;
@@ -56,6 +62,12 @@ def exportWaittimePerCustomer(filename:str):
             writer.writerow(datapoint);
     return;
 
+def meanWaittimePerCustomer():
+    sum=0.0;
+    for time in waittimePerCustomer:
+        sum+=time[1];
+    return sum/len(waittimePerCustomer);
+
 def addTotaltimePerCustomer(kundenNummer:int,verweilzeit:float):
     totaltimePerCustomer.append((kundenNummer,verweilzeit));
     return;
@@ -79,4 +91,18 @@ def exportTotaltimePerCustomer(filename:str):
         writer.writerow(['Kundennummer','Verweilzeit']);
         for datapoint in totaltimePerCustomer:
             writer.writerow(datapoint);
+    return;
+
+def meanTotaltimePerCustomer():
+    sum=0.0;
+    for time in totaltimePerCustomer:
+        sum+=time[1];
+    return sum/len(totaltimePerCustomer);
+
+def exportMeans(filename:str):
+    with open(filename,'w',newline='') as csvfile:
+        writer=csv.writer(csvfile,delimiter=' ',quotechar='|',quoting=csv.QUOTE_MINIMAL);
+        writer.writerow(['mittlere Anzahl wartender Kunden',meanWaits()]);
+        writer.writerow(['mittlere Wartezeit',meanWaittimePerCustomer()]);
+        writer.writerow(['mittlere Verweildauer',meanTotaltimePerCustomer()]);
     return;

@@ -86,7 +86,12 @@ env.run(until=16*60);#Lasse die Simulation bis 16 Uhr laufen. Das ist dann 16*60
 Analytics.createWaitAtPointGraph();
 Analytics.createWaittimePerCustomerGraph();
 Analytics.createTotaltimePerCustomerGraph();
+#Zeige Mittelwerte an.
+print("mittlere Anzahl wartender Kunden: %f"%Analytics.meanWaits());
+print("mittlere Wartezeit: %f"%Analytics.meanWaittimePerCustomer());
+print("mittlere Verweilzeit: %f"%Analytics.meanTotaltimePerCustomer());
 #Exportiere Daten in das CSV-Format.
 Analytics.exportWaitsAtPoint("wartende_Kunden.csv");
 Analytics.exportTotaltimePerCustomer("Verweilzeiten.csv");
 Analytics.exportWaittimePerCustomer("Wartezeiten.csv");
+Analytics.exportMeans("Mittelwerte.csv");
