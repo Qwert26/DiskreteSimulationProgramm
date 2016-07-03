@@ -3,11 +3,12 @@ import math;
 from LCG import LCG;
 from ManagedRessources import ManagedRessources as MR;
 import Analytics;
+import time;
 #Parameters
 K=3#Anzahl der Kassen bei Start
 L=5#Anzahl der wartenden Kunden
-Tr=0.5 #Minuten, Anzahl der Minuten pro Tier an der Kasse
-lamda=0.5 #/Minute, Parameter der Exponentialverteilung
+Tr=0.5#Minuten, Anzahl der Minuten pro Tier an der Kasse
+lamda=0.5#/Minute, Parameter der Exponentialverteilung
 period=0.01;#Periodendauer in Minuten mit der gewartet wird zwischen Bedingungsanfragen: Je niedriger desto genauer aber auch mehr Overhead für die Simulation.
 
 def generate(enviroment):
@@ -38,6 +39,7 @@ def customer(enviroment,ressource,kundenNummer):
     ressource.getIn(kundenNummer);
     while True:
         counter=ressource.getCounter(kundenNummer);
+        Analytics.addAverageQueueLengthAtPoint(enviroment.now,waitingCustomers()/len(ressource.counters));
         if counter is None:
             yield env.timeout(period);#Warte eine Periode.
         else:
@@ -82,16 +84,18 @@ counters=MR(env,K);
 env.process(generate(env));
 env.process(counterOpener(env));
 env.run(until=16*60);#Lasse die Simulation bis 16 Uhr laufen. Das ist dann 16*60 Minuten nach Mitternacht.
+timestamp=time.time();
 #Erzeuge, zeige und speichere Graphen.
-Analytics.createWaitAtPointGraph();
-Analytics.createWaittimePerCustomerGraph();
-Analytics.createTotaltimePerCustomerGraph();
+#Analytics.createWaitAtPointGraph();
+#Analytics.createWaittimePerCustomerGraph();
+#Analytics.createTotaltimePerCustomerGraph();
 #Zeige Mittelwerte an.
 print("mittlere Anzahl wartender Kunden: %f"%Analytics.meanWaits());
 print("mittlere Wartezeit: %f"%Analytics.meanWaittimePerCustomer());
 print("mittlere Verweilzeit: %f"%Analytics.meanTotaltimePerCustomer());
+print("mittlere Warteschlangenlänge: %f"%Analytics.meanAverageQueueLength());
 #Exportiere Daten in das CSV-Format.
-Analytics.exportWaitsAtPoint("wartende_Kunden.csv");
-Analytics.exportTotaltimePerCustomer("Verweilzeiten.csv");
-Analytics.exportWaittimePerCustomer("Wartezeiten.csv");
-Analytics.exportMeans("Mittelwerte.csv");
+Analytics.exportWaitsAtPoint("wartende_Kunden%i.csv"%timestamp);
+Analytics.exportTotaltimePerCustomer("Verweilzeiten%i.csv"%timestamp);
+Analytics.exportWaittimePerCustomer("Wartezeiten%i.csv"%timestamp);
+Analytics.exportMeans("Mittelwerte%i.csv"%timestamp);

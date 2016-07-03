@@ -3,6 +3,7 @@ import csv;
 waitsAtPoint=[];
 waittimePerCustomer=[];
 totaltimePerCustomer=[];
+averageQueueLengthAtPoint=[];
 
 def addWaitsAtPoint(zeitpunkt:float,wartendeKunden:int):
     waitsAtPoint.append((zeitpunkt,wartendeKunden));
@@ -105,4 +106,15 @@ def exportMeans(filename:str):
         writer.writerow(['mittlere Anzahl wartender Kunden',meanWaits()]);
         writer.writerow(['mittlere Wartezeit',meanWaittimePerCustomer()]);
         writer.writerow(['mittlere Verweildauer',meanTotaltimePerCustomer()]);
+        writer.writerow(['mittlere Warteschlangenlänge',meanAverageQueueLength()]);
     return;
+
+def addAverageQueueLengthAtPoint(zeitpunkt:float,durchschnitt:float):
+    averageQueueLengthAtPoint.append((zeitpunkt,durchschnitt));
+    return;
+
+def meanAverageQueueLength():
+    sum=0.0;
+    for data in averageQueueLengthAtPoint:
+        sum+=data[1];
+    return sum/len(averageQueueLengthAtPoint);
